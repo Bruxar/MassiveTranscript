@@ -19,10 +19,18 @@ def main(page: ft.Page):
     progress_bar = ft.ProgressBar(width=500, value=0, visible=False)
 
     # Mensaje de estado (inicialmente oculto)
-    status_message = ft.Text("", size=18, weight=ft.FontWeight.BOLD, visible=False)
+    status_message = ft.Row(controls=[], visible=False)  # Se cambia a Row para añadir iconos y textos
 
-    # Área de mensajes y progreso
-    log_area = ft.Column(scroll=ft.ScrollMode.AUTO)
+    # Área de mensajes y progreso con estilo de TextField, con expand para ocupar el espacio disponible
+    log_area = ft.Container(
+        content=ft.Column(scroll=ft.ScrollMode.AUTO),
+        padding=ft.padding.all(10),
+        expand=True,  # Para que el área de log ocupe el espacio disponible
+        width=page.window_width,
+        border_radius=ft.border_radius.all(10),
+        bgcolor=ft.colors.GREY_100,  # Color de fondo similar a un TextField
+        border=ft.border.all(1, ft.colors.GREY)  # Bordes para diferenciarlo
+    )
 
     # Botones
     upload_button = ft.ElevatedButton(
@@ -50,7 +58,7 @@ def main(page: ft.Page):
         nonlocal excel_file_path
         if e.files:
             excel_file_path = e.files[0].path
-            log_area.controls.append(ft.Text(f"Archivo cargado: {e.files[0].name}"))
+            log_area.content.controls.append(ft.Text(f"Archivo cargado: {e.files[0].name}"))
             page.update()
 
             # Habilitar el botón para seleccionar archivo de salida
@@ -62,7 +70,7 @@ def main(page: ft.Page):
         nonlocal save_file_path
         if e.path:
             save_file_path = e.path
-            log_area.controls.append(ft.Text(f"Archivo de salida seleccionado: {save_file_path}"))
+            log_area.content.controls.append(ft.Text(f"Archivo de salida seleccionado: {save_file_path}"))
             page.update()
 
             # Habilitar el botón para procesar videos
@@ -74,10 +82,10 @@ def main(page: ft.Page):
         # Resetear barra de progreso, mensaje de estado y log
         progress_bar.value = 0
         progress_bar.visible = True
-        status_message.value = "Descargando y transcribiendo... Esto tomará un tiempo."
+        status_message.controls.clear()
+        status_message.controls.append(ft.Text("Descargando y transcribiendo... Esto tomará un tiempo."))
         status_message.visible = True
-        status_message.color = ft.colors.BLACK  # Inicialmente el texto es negro
-        log_area.controls.clear()
+        log_area.content.controls.clear()
         page.update()
 
         # Desactivar todos los botones durante el procesamiento
@@ -93,13 +101,19 @@ def main(page: ft.Page):
             transcript_column_input.value,
             page,
             progress_bar,  # Pasar la barra de progreso
-            log_area,      # Pasar el área de log para los mensajes
+            log_area.content,  # Pasar el área de log para los mensajes
             save_file_path  # Ruta para guardar el nuevo archivo Excel
         )
 
-        # Cambiar el mensaje de estado una vez completado
-        status_message.value = f"Archivo Excel guardado en {save_file_path}."
-        status_message.color = ft.colors.GREEN  # Resaltar el mensaje final en verde
+        # Cambiar el mensaje de estado una vez completado con ícono y salto de línea
+        status_message.controls.clear()  # Limpiar controles previos
+        status_message.controls.append(
+            ft.Icon(name=ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN)  # Añadir icono
+        )
+        status_message.controls.append(
+            ft.Text(f"Archivo Excel guardado en:\n{save_file_path}", color=ft.colors.GREEN)  # Añadir texto
+        )
+        status_message.visible = True
         page.update()
 
         # Rehabilitar los botones después de que el proceso haya terminado
@@ -128,9 +142,9 @@ def main(page: ft.Page):
         url_column_input,
         transcript_column_input,
         button_row,
-        status_message,  # Mensaje de estado
+        status_message,  # Mensaje de estado con ícono y texto
         progress_bar,    # Barra de progreso
-        log_area         # Área de mensajes
+        log_area         # Área de mensajes con estilo de TextField y expand para ocupar el espacio
     )
 
 ft.app(target=main)
