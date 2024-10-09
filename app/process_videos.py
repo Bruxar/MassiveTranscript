@@ -5,7 +5,7 @@ from app.download_handler import download_audio_from_youtube, get_video_duration
 from app.transcription_handler import transcribe_audio
 
 # Función para procesar el Excel
-def process_excel(file_path, url_column, transcript_column, page, progress_bar, log_area):
+def process_excel(file_path, url_column, transcript_column, page, progress_bar, log_area, save_file_path):
     # Leer el archivo Excel subido por el usuario
     df = pd.read_excel(file_path)
 
@@ -55,7 +55,7 @@ def process_excel(file_path, url_column, transcript_column, page, progress_bar, 
         progress_bar.value = processed_videos / total_videos
         page.update()
 
-    # Guardar el DataFrame actualizado en el Excel
-    df.to_excel(file_path, index=False)
-    log_area.controls.append(ft.Text("Procesamiento completado."))
+    # Guardar el DataFrame actualizado en una nueva ubicación
+    df.to_excel(save_file_path, index=False)
+    log_area.controls.append(ft.Text(f"Archivo Excel guardado en {save_file_path}."))
     page.update()

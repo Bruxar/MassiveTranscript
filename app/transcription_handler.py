@@ -3,7 +3,7 @@ import os
 
 # Función para transcribir un archivo de audio usando Whisper
 def transcribe_audio(audio_file):
-    model = whisper.load_model("small")  # Carga el modelo Whisper
+    model = whisper.load_model("turbo")  # Carga el modelo Whisper
     try:
         result = model.transcribe(audio_file)
         return result['text']  # Retorna la transcripción
