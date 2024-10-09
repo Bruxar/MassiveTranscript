@@ -57,5 +57,4 @@ def process_excel(file_path, url_column, transcript_column, page, progress_bar, 
 
     # Guardar el DataFrame actualizado en una nueva ubicación
     df.to_excel(save_file_path, index=False)
-    log_area.controls.append(ft.Text(f"Archivo Excel guardado en {save_file_path}."))
     page.update()
