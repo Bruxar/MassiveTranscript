@@ -1,0 +1,5 @@
+flet==0.24.1
+openai-whisper==20240930
+pandas==2.2.3
+yt-dlp==2024.9.27
+
